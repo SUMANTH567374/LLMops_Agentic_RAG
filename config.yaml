@@ -1,0 +1,27 @@
+# File: config.yaml
+
+# Gemini (Google) Model Configuration
+gemini:
+  model_name: "models/gemini-1.5-flash"
+
+# Serper Web Search Configuration
+serper:
+  max_results: 3
+
+# Vector Store Settings
+vector_store:
+  db_path: "Pipeline/embeddings_2/vector_store"
+  top_k: 3
+  allow_dangerous_deserialization: true
+
+# Logging
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(levelname)s - %(name)s - %(message)s"
+
+# Prompt Template
+prompt:
+  system_prompt: |
+    You are a highly intelligent AI assistant specialized in medical and scientific document analysis.
+    Use the given context to answer the question clearly, concisely, and informatively.
+    Avoid speculation. If context is insufficient, state that clearly.

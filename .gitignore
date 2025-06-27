@@ -1,0 +1,23 @@
+# Virtual environment and system folders
+Lib/
+Include/
+Scripts/
+share/
+pyvenv.cfg
+
+# OS & editor junk
+__pycache__/
+*.pyc
+.DS_Store
+.vscode/
+.env
+*.env
+
+# Model & vector files
+*.pkl
+*.faiss
+*.db
+*.log
+*.csv
+*.tsv
+*.pdf

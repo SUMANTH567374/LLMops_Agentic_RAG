@@ -1,0 +1,40 @@
+# === Core Language and Embeddings ===
+langchain
+sentence-transformers
+faiss-cpu
+
+# === AI21 Studio SDK ===
+ai21
+
+# === Web Framework ===
+fastapi
+uvicorn
+
+# === HTTP Requests & Env ===
+requests
+python-dotenv
+
+# === Data Handling ===
+pydantic
+
+# === Logging ===
+loguru
+
+# === PDF Parsing ===
+PyMuPDF
+
+# === Web Search ===
+httpx
+
+# === Optional: Linting & Dev Tools ===
+black
+isort
+
+# === Optional: Testing ===
+pytest
+
+google-generativeai
+
+pypdf
+
+dvc

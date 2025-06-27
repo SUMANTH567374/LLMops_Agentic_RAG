@@ -1,0 +1,30 @@
+stages:
+
+  load_data:
+    cmd: python Pipeline/data_1/load_documents.py
+    deps:
+      - Pipeline/data_1/load_documents.py
+      - data/raw/
+    outs:
+      - data/processed/documents.pkl
+
+  build_vector_store:
+    cmd: python Pipeline/embeddings_2/build_vector_store.py
+    deps:
+      - Pipeline/embeddings_2/build_vector_store.py
+      - data/processed/documents.pkl
+    outs:
+      - Pipeline/embeddings_2/vector_store/
+
+  query_test:
+    cmd: python Pipeline/embeddings_2/query_vector_store.py
+    deps:
+      - Pipeline/embeddings_2/query_vector_store.py
+      - Pipeline/embeddings_2/vector_store/
+
+  run_rag_api:
+    cmd: uvicorn api.main:app --reload
+    deps:
+      - api/main.py
+      - Pipeline/embeddings_2/query_vector_store.py
+      - 5_agent/hybrid_qa_agent.py
