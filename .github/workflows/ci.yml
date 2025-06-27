@@ -1,5 +1,3 @@
-# File: .github/workflows/ci.yml
-
 name: LLM-RAG CI Pipeline
 
 on:
@@ -9,7 +7,10 @@ on:
     branches: [main]
 
 jobs:
+
+  ### 🧪 TEST JOB ###
   test:
+    name: 🧪 Run Python Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -33,4 +34,32 @@ jobs:
     - name: ✅ Run tests
       run: |
         PYTHONPATH=. pytest tests/
+
+  ### 🐳 DOCKER JOB ###
+  docker:
+    name: 🐳 Build & Push Docker Image
+    runs-on: ubuntu-latest
+    needs: test  # Run Docker build only after test job passes
+
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v3
+
+    - name: 🐳 Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: 🔐 Log in to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: 🧱 Build Docker Image
+      run: |
+        docker build -t llmrag-app .
+
+    - name: 🚀 Push Docker Image
+      run: |
+        docker tag llmrag-app ${{ secrets.DOCKER_USERNAME }}/llmrag-app:latest
+        docker push ${{ secrets.DOCKER_USERNAME }}/llmrag-app:latest
 
