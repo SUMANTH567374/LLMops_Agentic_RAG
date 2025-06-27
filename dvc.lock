@@ -30,7 +30,7 @@ stages:
       size: 21103
       nfiles: 2
   run_rag_api:
-    cmd: uvicorn Pipeline/api_6/main:app --reload
+    cmd: uvicorn Pipeline.api_6.main:app --reload
     deps:
     - path: Pipeline/agent_5/hybrid_agent.py
       hash: md5
