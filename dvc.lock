@@ -1,0 +1,46 @@
+schema: '2.0'
+stages:
+  build_vector_store:
+    cmd: python Pipeline/embeddings_2/build_vector_store.py
+    deps:
+    - path: Pipeline/data_1/Mukku_Sumanth_Updated_Resume_IT.pdf
+      hash: md5
+      md5: b87e15c2a88363c5736b33ed2b185500
+      size: 325632
+    - path: Pipeline/embeddings_2/build_vector_store.py
+      hash: md5
+      md5: 6c31e5ee6b483016514b10e9597929ad
+      size: 1576
+    outs:
+    - path: Pipeline/embeddings_2/vector_store/
+      hash: md5
+      md5: 700697ea33e4e046e891304ff6ab6ac5.dir
+      size: 21103
+      nfiles: 2
+  query_test:
+    cmd: python Pipeline/embeddings_2/query_vector_store.py
+    deps:
+    - path: Pipeline/embeddings_2/query_vector_store.py
+      hash: md5
+      md5: 0f2c79430a620befc889e64a6ea8bd78
+      size: 1897
+    - path: Pipeline/embeddings_2/vector_store/
+      hash: md5
+      md5: 700697ea33e4e046e891304ff6ab6ac5.dir
+      size: 21103
+      nfiles: 2
+  run_rag_api:
+    cmd: uvicorn Pipeline/api_6/main:app --reload
+    deps:
+    - path: Pipeline/agent_5/hybrid_agent.py
+      hash: md5
+      md5: c002726d0f6fa9002834317ce29f40c2
+      size: 3843
+    - path: Pipeline/api_6/main.py
+      hash: md5
+      md5: 28b7af590681b7a56c43b4e538381cf3
+      size: 1556
+    - path: Pipeline/embeddings_2/query_vector_store.py
+      hash: md5
+      md5: 0f2c79430a620befc889e64a6ea8bd78
+      size: 1897
