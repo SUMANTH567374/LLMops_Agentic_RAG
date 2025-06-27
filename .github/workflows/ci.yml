@@ -28,7 +28,7 @@ jobs:
 
     - name: 🧠 Build vector store
       run: |
-        python Pipeline/embeddings_2/build_vector_store.py
+        PYTHONPATH=. python Pipeline/embeddings_2/build_vector_store.py
 
     - name: ✅ Run tests
       run: |
