@@ -14,26 +14,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: 📥 Checkout code
-      uses: actions/checkout@v3
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
 
-    - name: 🐍 Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
 
-    - name: 📦 Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
+      - name: 📦 Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-    - name: 🧠 Build vector store
-      run: |
-        PYTHONPATH=. python Pipeline/embeddings_2/build_vector_store.py
+      - name: 🧠 Build vector store
+        run: |
+          PYTHONPATH=. python Pipeline/embeddings_2/build_vector_store.py
 
-    - name: ✅ Run tests
-      run: |
-        PYTHONPATH=. pytest tests/
+      - name: ✅ Run tests
+        run: |
+          PYTHONPATH=. pytest tests/
 
   ### 🐳 DOCKER JOB ###
   docker:
@@ -42,29 +42,35 @@ jobs:
     needs: test
 
     steps:
-    - name: 📥 Checkout code
-      uses: actions/checkout@v3
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
 
-    - name: 🐳 Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
+      - name: 🐳 Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-    - name: 🔐 Log in to Docker Hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: 🔐 Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: 🧱 Build Docker Image
-      run: |
-        docker build -t llmrag-app .
+      - name: 🧱 Build Docker Image
+        run: |
+          docker build -t llmrag-app .
 
-    - name: 📸 List Docker Images
-      run: docker image ls
+      - name: 📸 List Docker images
+        run: docker image ls
 
-    - name: 🚀 Tag Docker Image
-      run: |
-        docker tag llmrag-app ${{ secrets.DOCKER_USERNAME }}/llmrag-app:latest
+      - name: 🚀 Tag Docker Image
+        run: |
+          docker tag llmrag-app ${{ secrets.DOCKER_USERNAME }}/llmrag-app:latest
 
-    - name: 📤 Push Docker Image
-      run: |
-        docker push ${{ secrets.DOCKER_USERNAME }}/llmrag-app:latest
+      - name: 📤 Push Docker Image
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/llmrag-app:latest
+
+      - name: ✅ Run container with API keys
+        run: |
+          docker run -e GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }} \
+                     -e SERPER_API_KEY=${{ secrets.SERPER_API_KEY }} \
+                     -p 8000:8000 ${{ secrets.DOCKER_USERNAME }}/llmrag-app:latest
