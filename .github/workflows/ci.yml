@@ -63,3 +63,4 @@ jobs:
             -e SERPER_API_KEY=${{ secrets.SERPER_API_KEY }} \
             -p 8000:8000 \
             docker.io/${{ secrets.DOCKER_USERNAME }}/llmrag-app:latest
+
