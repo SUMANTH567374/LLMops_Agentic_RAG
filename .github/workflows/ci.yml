@@ -7,15 +7,12 @@ on:
     branches: [main]
 
 jobs:
-
-  ### 🧪 TEST JOB ###
   test:
     name: 🧪 Run Python Tests
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📥 Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       - name: 🐍 Set up Python
         uses: actions/setup-python@v4
@@ -35,15 +32,13 @@ jobs:
         run: |
           PYTHONPATH=. pytest tests/
 
-  ### 🐳 DOCKER JOB ###
   docker:
     name: 🐳 Build & Push Docker Image
     runs-on: ubuntu-latest
     needs: test
 
     steps:
-      - name: 📥 Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       - name: 🐳 Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -55,22 +50,22 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: 🧱 Build Docker Image
-        run: |
-          docker build -t llmrag-app .
+        run: docker build -t llmrag-app .
 
       - name: 📸 List Docker images
         run: docker image ls
 
       - name: 🚀 Tag Docker Image
         run: |
-          docker tag llmrag-app ${{ secrets.DOCKER_USERNAME }}/llmrag-app:latest
+          docker tag llmrag-app "${{ secrets.DOCKER_USERNAME }}/llmrag-app:latest"
 
       - name: 📤 Push Docker Image
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/llmrag-app:latest
+          docker push "${{ secrets.DOCKER_USERNAME }}/llmrag-app:latest"
 
       - name: ✅ Run container with API keys
         run: |
-          docker run -e GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }} \
-                     -e SERPER_API_KEY=${{ secrets.SERPER_API_KEY }} \
-                     -p 8000:8000 ${{ secrets.DOCKER_USERNAME }}/llmrag-app:latest
+          docker run --rm \
+              -e GEMINI_API_KEY="${{ secrets.GEMINI_API_KEY }}" \
+              -e SERPER_API_KEY="${{ secrets.SERPER_API_KEY }}" \
+              -p 8000:8000 "${{ secrets.DOCKER_USERNAME }}/llmrag-app:latest"
