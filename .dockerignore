@@ -1,7 +1,11 @@
 __pycache__/
 *.pyc
-data_1/
+*.pkl
+*.ipynb
 .env
-.git
+.git/
 .gitignore
 tests/
+notebooks/
+data/
+artifacts/
