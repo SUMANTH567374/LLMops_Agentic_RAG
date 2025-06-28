@@ -45,20 +45,25 @@ jobs:
 
       - name: ✅ Smoke‑test API
         run: |
-          docker run --rm \
+          CONTAINER_ID=$(docker run -d \
             -e GEMINI_API_KEY="${{ secrets.GEMINI_API_KEY }}" \
             -e SERPER_API_KEY="${{ secrets.SERPER_API_KEY }}" \
             -p 8000:8000 \
-            msumanth06/llmrag-app:latest \
-            sh -c '
-              uvicorn Pipeline.api_6.main:app --host 0.0.0.0 --port 8000 &
+            msumanth06/llmrag-app:latest)
 
-              for i in {1..10}; do
-                echo "🔄 Checking if FastAPI is up (attempt $i)..."
-                curl -f http://localhost:8000/docs && exit 0
-                sleep 3
-              done
+          echo "🚀 Started container $CONTAINER_ID"
 
-              echo "❌ FastAPI did not start in time"
-              exit 1
-            '
+          for i in {1..10}; do
+            echo "🔄 Checking if FastAPI is up (attempt $i)..."
+            if curl -f http://localhost:8000/docs; then
+              echo "✅ FastAPI is up!"
+              docker stop "$CONTAINER_ID"
+              exit 0
+            fi
+            sleep 3
+          done
+
+          echo "❌ FastAPI did not start in time"
+          docker logs "$CONTAINER_ID"
+          docker stop "$CONTAINER_ID"
+          exit 1
