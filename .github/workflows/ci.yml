@@ -58,6 +58,9 @@ jobs:
       run: |
         docker build -t llmrag-app .
 
+    - name: 🐳 List Docker images
+      run: docker images
+
     - name: 🚀 Tag Docker Image
       run: |
         docker tag llmrag-app ${{ secrets.DOCKER_USERNAME }}/llmrag-app:latest
