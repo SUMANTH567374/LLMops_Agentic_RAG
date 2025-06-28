@@ -50,4 +50,12 @@ jobs:
             -e SERPER_API_KEY="${{ secrets.SERPER_API_KEY }}" \
             -p 8000:8000 \
             msumanth06/llmrag-app:latest \
-            sh -c "sleep 5 && curl -f http://localhost:8000/docs"
+            sh -c '
+              for i in {1..10}; do
+                echo "🔄 Checking if FastAPI is up (attempt $i)..."
+                curl -f http://localhost:8000/docs && exit 0
+                sleep 3
+              done
+              echo "❌ FastAPI did not start in time"
+              exit 1
+            '
