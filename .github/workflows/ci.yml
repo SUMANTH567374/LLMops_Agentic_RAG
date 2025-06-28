@@ -39,7 +39,7 @@ jobs:
   docker:
     name: 🐳 Build & Push Docker Image
     runs-on: ubuntu-latest
-    needs: test  # Run Docker build only after tests pass
+    needs: test
 
     steps:
     - name: 📥 Checkout code
@@ -58,14 +58,13 @@ jobs:
       run: |
         docker build -t llmrag-app .
 
-    - name: 🐳 List Docker images
-      run: docker images
+    - name: 📸 List Docker Images
+      run: docker image ls
 
     - name: 🚀 Tag Docker Image
       run: |
         docker tag llmrag-app ${{ secrets.DOCKER_USERNAME }}/llmrag-app:latest
 
-    - name: 🚀 Push Docker Image
+    - name: 📤 Push Docker Image
       run: |
         docker push ${{ secrets.DOCKER_USERNAME }}/llmrag-app:latest
-
