@@ -1,21 +1,30 @@
-# Use Python 3.10 image
-FROM python:3.10
+# ----------------------------
+# Stage 1: Builder
+# ----------------------------
+FROM python:3.10-slim AS builder
 
-# Set working directory
 WORKDIR /app
 
-# Copy project files
+# Copy and install dependencies
+COPY requirements.txt .
+RUN pip install --upgrade pip && \
+    pip install --default-timeout=100 --retries=10 --no-cache-dir -r requirements.txt
+
+# ----------------------------
+# Stage 2: Final Image
+# ----------------------------
+FROM python:3.10-slim
+
+WORKDIR /app
+
+# Copy Python libraries from builder
+COPY --from=builder /usr/local/lib/python3.10 /usr/local/lib/python3.10
+
+# Copy your code
 COPY . .
 
-# Install dependencies
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
-
-# Optional: build vector store inside image (not needed if done externally)
-# RUN PYTHONPATH=. python Pipeline/embeddings_2/build_vector_store.py
-
-# Expose FastAPI port
+# Expose the FastAPI port
 EXPOSE 8000
 
-# Start FastAPI app
-CMD ["uvicorn", "6_api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Run FastAPI app using correct path
+CMD ["python", "-m", "uvicorn", "Pipeline.api_6.main:app", "--host", "0.0.0.0", "--port", "8000"]
