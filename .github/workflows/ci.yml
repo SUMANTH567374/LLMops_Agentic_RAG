@@ -1,3 +1,4 @@
+
 name: LLM-RAG CI Pipeline
 
 on:
@@ -7,6 +8,7 @@ on:
     branches: [main]
 
 jobs:
+  ### 🧪 TEST JOB ###
   test:
     name: 🧪 Run Python Tests
     runs-on: ubuntu-latest
@@ -33,8 +35,10 @@ jobs:
         run: |
           PYTHONPATH=. pytest tests/
 
+
+  ### 🐳 DOCKER JOB ###
   docker:
-    name: Docker Build and Push
+    name: 🐳 Build & Push Docker Image
     needs: test
     runs-on: ubuntu-latest
 
@@ -48,9 +52,13 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: 🐳 Build Docker Image
+      - name: 🐳 Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 🧱 Build Docker Image with Buildx
         run: |
-          docker build -t docker.io/${{ secrets.DOCKER_USERNAME }}/llmrag-app:latest .
+          docker buildx build --load \
+            -t docker.io/${{ secrets.DOCKER_USERNAME }}/llmrag-app:latest .
 
       - name: 📤 Push Docker Image
         run: |
@@ -63,4 +71,3 @@ jobs:
             -e SERPER_API_KEY=${{ secrets.SERPER_API_KEY }} \
             -p 8000:8000 \
             docker.io/${{ secrets.DOCKER_USERNAME }}/llmrag-app:latest
-
